@@ -1,0 +1,33 @@
+{
+  "collapseTableOfContents": false,
+  "items": [
+    {
+      "type": "item",
+      "title": "About Starwipe",
+      "uri": "/docs/About-Starwipe.md"
+    },
+    {
+      "type": "divider",
+      "title": "Getting Started"
+    },
+    {
+      "type": "item",
+      "title": "Overview",
+      "uri": "/docs/Getting-Started.md"
+    },
+    {
+      "type": "item",
+      "title": "Authentication",
+      "uri": "/docs/Authentication.md"
+    },
+    {
+      "type": "divider",
+      "title": "API Reference"
+    },
+    {
+      "type": "item",
+      "title": "Starwipe Photo API",
+      "uri": "/photohostingAPI.yaml"
+    }
+  ]
+}
