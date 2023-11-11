@@ -1,5 +1,5 @@
 # ptw330
-Portfolio project for PTW 330. API documentation site for a simple photo hosting service.
+Group portfolio project for PTW 330. API documentation site for a simple photo hosting service.
 
 # Project Overview
 Starwipe Productions has created a simulation of a proprietary photo hosting API for use with third-party platforms. We’ve generated an array of requests, parameters, and responses based on industry leading examples. We have also included user models built from research related to real world API users.
