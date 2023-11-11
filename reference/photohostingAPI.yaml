@@ -1,0 +1,1087 @@
+openapi: 3.0.0
+x-stoplight:
+  id: 1cpfykdkwn594
+info:
+  title: Starwipe API
+  version: '2.1'
+  description: |-
+    The Starwipe API is a RESTful API that uses standard HTTP request methods and response codes. Our API is designed with resource-oriented endpoints and accepts JSON request and response bodies.
+
+    **New to Starwipe?** Check out our [Getting Started](../docs/Getting-Started.md) guide for steps on acquiring an API key and quickly get up and running with the Starwipe API.
+  license:
+    name: Apache 2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+  contact:
+    name: API Support
+    email: apisupport@starwipe.com
+    url: 'https://support.starwipe.com'
+  termsOfService: 'https://starwipe.com/terms'
+paths:
+  /users:
+    post:
+      summary: Create User
+      operationId: create-user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserEdit'
+        description: ''
+      responses:
+        '201':
+          description: User created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          headers:
+            location:
+              schema:
+                type: string
+              description: URL of the new user
+        '400':
+          description: Bad Request. Likely due to a missing or invalid `username` or `email`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+      x-stoplight:
+        id: vablafvlectf9
+      description: |-
+        Add a new user to the system. Starwipe requires a unique username and email address to create a new user profile. 
+
+        Only email is required in the request body. If no username is sent in the request, Starwipe will generate a username based on the supplied email. The resulting system-generated username will be returned in the response. This method eliminates the need to make multiple calls to successfully create a unique username.
+      tags:
+        - Users
+      parameters: []
+    parameters: []
+  '/users/{user_id}':
+    parameters:
+      - $ref: '#/components/parameters/user_id'
+    get:
+      summary: Get User
+      tags:
+        - Users
+      responses:
+        '200':
+          description: User retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/error_bad_request'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+      operationId: get-users-user_id
+      x-stoplight:
+        id: y4lrvxzxcqdxn
+      description: 'Capture profile information on an existing user. The call returns all available user data by default if no query parameters are specified, otherwise sends only the attributes identified in the request.'
+      parameters:
+        - schema:
+            type: string
+            example: bigcat78
+          in: query
+          name: username
+          description: User-created unique identifier.
+        - schema:
+            type: string
+            example: bigcat@gmail.com
+            format: email
+          in: query
+          name: email
+          description: Email address of the user.
+        - schema:
+            type: string
+            format: date
+            example: '2023-10-25'
+          in: query
+          name: date_created
+          description: Date the user account was created in ISO 8601 full-date format.
+        - schema:
+            type: integer
+          in: query
+          name: gallery_count
+          description: Number of galleries the user has uploaded.
+        - schema:
+            type: integer
+          in: query
+          name: image_count
+          description: Number of photos the user has uploaded.
+        - schema:
+            type: string
+            enum:
+              - basic
+              - starter
+              - premium
+          in: query
+          name: subscription_level
+          description: Subscription level of the user.
+    put:
+      summary: Edit User
+      operationId: edit-users-user_id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserEdit'
+        description: ''
+      responses:
+        '200':
+          description: User edited successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/error_bad_request'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+      x-stoplight:
+        id: gifuqfau0vqoi
+      tags:
+        - Users
+      parameters: []
+      description: Change an existing user’s profile information. Include all user data that you want to change in the body of the request. Any property not specified in the call will remain unchanged in the user’s profile.
+    delete:
+      summary: Delete User
+      operationId: delete-users-user_id
+      responses:
+        '204':
+          description: User deleted successfully
+        '400':
+          $ref: '#/components/responses/error_bad_request'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+      x-stoplight:
+        id: kp7zb9utj2453
+      tags:
+        - Users
+      description: |-
+        Permanently delete a user from the system. 
+
+        <!-- theme: warning -->
+        > This action cannot be reversed.
+      parameters: []
+  /galleries:
+    post:
+      summary: Create Gallery
+      operationId: create-gallery
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GalleryEdit'
+        description: ''
+      responses:
+        '201':
+          description: Gallery created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gallery'
+          headers:
+            location:
+              schema:
+                type: string
+                example: 'https://starwipe.com/albums/'
+              description: URL of the new gallery
+        '400':
+          description: Bad Request. Gallery name missing.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+      x-stoplight:
+        id: 3io55nyj9i1j8
+      description: |-
+        Create a new gallery. Requires a gallery name and the id of the user associated with the gallery; all other attributes are optional.
+
+        If no `gallery_name` is specified in the request, Starwipe automatically sets the name of the new gallery as **Untitled**.
+      parameters: []
+      tags:
+        - Galleries
+    get:
+      summary: Search for Galleries
+      tags:
+        - Galleries
+      responses:
+        '200':
+          description: Galleries returned successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Gallery search results.
+                properties:
+                  count:
+                    type: integer
+                    x-stoplight:
+                      id: 53h2kk2n8wt2o
+                    description: Number of galleries returned.
+                  search-results:
+                    x-stoplight:
+                      id: f5dqalils823y
+                    type: array
+                    description: List of returned galleries.
+                    items:
+                      $ref: '#/components/schemas/Gallery'
+        '204':
+          description: Call was successful but no galleries match the specified parameters.
+        '400':
+          $ref: '#/components/responses/error_bad_request'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+      operationId: search-galleries
+      x-stoplight:
+        id: s6qjwuvsx3wnn
+      description: Retrieve public galleries according to specified search parameters.
+      parameters:
+        - schema:
+            type: integer
+            maximum: 50
+            default: 20
+            example: 35
+          in: query
+          name: limit
+          description: Maximum number of galleries to return.
+        - schema:
+            type: integer
+            default: 0
+            example: 20
+          in: query
+          name: index
+          description: The index of the first gallery to return. Use with limit to paginate over large sets of galleries.
+        - schema:
+            type: string
+            example: 'school,work'
+          in: query
+          name: tag
+          description: A comma-separated list of tags to match.
+        - schema:
+            type: integer
+          in: query
+          name: user_id
+          description: Return galleries from a specified user.
+  '/galleries/{gallery_id}':
+    parameters:
+      - $ref: '#/components/parameters/gallery_id'
+    get:
+      summary: Get Gallery
+      operationId: get-galleries-gallery_id
+      responses:
+        '200':
+          description: Gallery retrieved successfully.
+          content:
+            application/zip:
+              schema:
+                $ref: '#/components/schemas/Gallery'
+        '400':
+          $ref: '#/components/responses/error_bad_request'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+      x-stoplight:
+        id: dozwcq9sfj79w
+      tags:
+        - Galleries
+      description: Fetch information about a specific gallery.
+      parameters: []
+    put:
+      summary: Edit Gallery
+      operationId: edit-galleries-gallery_id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GalleryEdit'
+      responses:
+        '200':
+          description: Gallery edited successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gallery'
+        '400':
+          $ref: '#/components/responses/error_bad_request'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+      x-stoplight:
+        id: o6ehf8b927dte
+      tags:
+        - Galleries
+      description: 'Edit the attributes of an existing gallery. Some changes can be sent as query parameters, others must be sent within the request body.'
+      parameters:
+        - schema:
+            type: string
+            maxLength: 50
+            example: Work stuff
+          in: query
+          name: gallery_name
+          description: Display name of the gallery. Alphanumeric characters only.
+        - schema:
+            type: integer
+            example: 2
+            default: 0
+          in: query
+          name: gallery_order
+          description: The display order of the gallery in the user's set of galleries. Display order is a 0-based index.
+    delete:
+      summary: Delete Gallery
+      operationId: delete-galleries-gallery_id
+      responses:
+        '200':
+          description: Gallery deleted successfully
+        '400':
+          $ref: '#/components/responses/error_bad_request'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+      x-stoplight:
+        id: 7gov8h66hapq1
+      description: |-
+        Permanently delete a gallery from the system.
+
+        <!-- theme: warning -->
+        > This action cannot be reversed.
+      tags:
+        - Galleries
+  '/galleries/{gallery_id}/archive':
+    parameters:
+      - $ref: '#/components/parameters/gallery_id'
+    put:
+      summary: Archive Gallery
+      tags:
+        - Galleries
+      responses:
+        '200':
+          description: Gallery archived successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gallery'
+              examples:
+                Archived Gallery:
+                  value:
+                    gallery_id: fqlugzioh0mc
+                    gallery_name: Final
+                    date_created: '2015-05-23'
+                    gallery_url: 'https://starwipe.com/galleries/fqlugzioh0mc'
+                    user_id: 1000338765
+                    description: school project
+                    tags:
+                      - school
+                      - portfolio
+                    image_count: 55
+                    gallery_order: 5
+                    privacy: shareable
+                    archived: true
+                    archive_reason: free up space
+                    object: gallery
+                    last_error_type: gallery_creation_error
+        '400':
+          $ref: '#/components/responses/error_bad_request'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+      operationId: put-galleries-gallery_id-archive
+      x-stoplight:
+        id: rzlcqkabpg050
+      description: Archive an image gallery within the Starwipe database.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                archive_reason:
+                  type: string
+                  x-stoplight:
+                    id: v3b2zhjgp66gm
+                  description: 'An optional field for specifying the reason for archiving the gallery (e.g. “Privacy concerns,” “Duplicate,” “Need more space”).'
+                  example: Need more space
+            examples:
+              Example 1:
+                value:
+                  archive_reason: Need more space
+        description: ''
+  '/galleries/{gallery_id}/order':
+    parameters:
+      - schema:
+          type: string
+        name: gallery_id
+        in: path
+        required: true
+        description: string
+    put:
+      summary: Set Gallery Order
+      tags:
+        - Galleries
+      responses:
+        '200':
+          description: Gallery ordered successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gallery'
+        '400':
+          $ref: '#/components/responses/error_bad_request'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+      operationId: put-galleries-gallery_id-order
+      x-stoplight:
+        id: 8jfaj0ihn9i5d
+      description: Change the display order of a gallery.
+      parameters:
+        - schema:
+            type: integer
+            example: 4
+          in: query
+          name: gallery_order
+          description: The display order of the gallery in the user's set of galleries. Display order is a 0-based index.
+  /groups:
+    post:
+      summary: Create Group
+      responses:
+        '201':
+          description: Group created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          headers: {}
+        '400':
+          description: 'Bad Request. Check if `group_name` already exists and try again. '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/error_unauthorized'
+      operationId: create-group
+      x-stoplight:
+        id: 1kyqv0fn7zv7c
+      description: |
+        Add a new group to the system. One user will start the group and serve as the admin. The admin can invite other Starwipe users to join the group. 
+
+        Each group must be named and include at least two users. The group name must be unique for that user. An individual user may not have multiple groups with the same name. The group name will be returned in the response. 
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupEdit'
+        description: ''
+      tags:
+        - Groups
+    parameters: []
+components:
+  schemas:
+    Gallery:
+      type: object
+      x-stoplight:
+        id: v896yqmkf0vdu
+      x-examples:
+        Gallery Example:
+          gallery_id: 9v97so8d6fh2
+          gallery_name: Recent
+          date_created: '2019-08-24'
+          gallery_url: 'https://starwipe.com/gallery/9v97so8d6fh2'
+          user_id: 1000567348
+          description: phone dump
+          tags:
+            - phone
+            - '2019'
+          image_count: 23
+          gallery_order: 2
+          privacy: private
+          archived: false
+          archive_reason: string
+          object: gallery
+          last_error_type: string
+        New Gallery:
+          gallery_id: nt7p0afs6ssp
+          gallery_name: vacation photos
+          date_created: '2023-11-01'
+          gallery_url: 'https://starwipe.com/galleries/nt7p0afs6ssp'
+          user_id: 1000468345
+          description: summer trip to Spain
+          tags:
+            - personal
+            - '2023'
+          image_count: 0
+          gallery_order: 2
+          privacy: private
+          archived: false
+          archive_reason: string
+          object: gallery
+          last_error_type: string
+        Archived Gallery:
+          gallery_id: fqlugzioh0mc
+          gallery_name: Final
+          date_created: '2015-05-23'
+          gallery_url: 'https://starwipe.com/galleries/fqlugzioh0mc'
+          user_id: 1000338765
+          description: school project
+          tags:
+            - school
+            - portfolio
+          image_count: 55
+          gallery_order: 5
+          privacy: shareable
+          archived: true
+          archive_reason: free up space
+          object: gallery
+          last_error_type: gallery_creation_error
+      title: Gallery Object
+      properties:
+        gallery_id:
+          type: string
+          x-stoplight:
+            id: 0ezen1uhsh7mu
+          description: Unique identifier of the gallery.
+          example: nt7p0afs6ssp
+        gallery_name:
+          type: string
+          description: Display name of the gallery. Alphanumeric characters only.
+          x-stoplight:
+            id: yf4zhonmvsev3
+          example: vacation photos
+          maxLength: 50
+        date_created:
+          type: string
+          x-stoplight:
+            id: yqqmnqo287stz
+          format: date
+          description: Date the gallery was created in ISO 8601 full-date format.
+          example: '2023-11-01'
+        gallery_url:
+          type: string
+          x-stoplight:
+            id: v3td2kmczm3r9
+          description: External URL of the gallery.
+          example: 'https://starwipe.com/galleries/nt7p0afs6ssp'
+        user_id:
+          type: integer
+          x-stoplight:
+            id: fwrl8ko96ecv8
+          description: Unique 10-digit id of the user who owns the gallery.
+        description:
+          type: string
+          x-stoplight:
+            id: 4203lmjnervn3
+          description: Text description created by the user.
+          maxLength: 250
+          example: summer trip to Spain
+        tags:
+          type: array
+          x-stoplight:
+            id: tlfaqovoo8r9v
+          description: List of tags attached to the gallery. Tags are defined by the user.
+          items:
+            x-stoplight:
+              id: qry3qrc0zz430
+            type: string
+            example: personal
+        image_count:
+          type: integer
+          x-stoplight:
+            id: mg5ff20d6bqvk
+          description: Number of images contained in the gallery.
+          example: 13
+        gallery_order:
+          type: integer
+          x-stoplight:
+            id: c7qd6a99mzrem
+          example: 2
+          description: The display order of the gallery in the user's set of galleries. Display order is a 0-based index.
+        privacy:
+          x-stoplight:
+            id: 4os0t61drtgaa
+          description: Indicates whether a gallery is shareable.
+          default: private
+          enum:
+            - private
+            - shareable
+            - public
+        archived:
+          type: boolean
+          x-stoplight:
+            id: 50wk5mzy9sgse
+          description: 'When true, gallery is archived.'
+          default: false
+        archive_reason:
+          type: string
+          x-stoplight:
+            id: v4lss9ypov443
+          description: Brief explanation specifying the reason for archiving the gallery.
+          maxLength: 50
+        object:
+          x-stoplight:
+            id: jd1lz80jeaw52
+          default: gallery
+          description: Type of the resource.
+          type: string
+        last_error_type:
+          type: string
+          x-stoplight:
+            id: 3o3ehncq0nzng
+          example: gallery_creation_error
+          description: 'Most recent error associated with this object, if any exists. If the field is empty, no errors have occurred.'
+      required:
+        - gallery_id
+        - gallery_name
+    User:
+      type: object
+      x-examples:
+        User:
+          user_id: 1000567345
+          username: maxpower55
+          email: max.power@yahoo.com
+          date_created: '2023-11-01'
+          first_name: Max
+          middle_name: string
+          last_name: Power
+          gallery_count: 3
+          image_count: 20
+          groups_joined:
+            - cmnxahsq6btl
+          groups_invited:
+            - 7204rh9kxhd8
+          privacy_enabled: false
+          subscription: starter
+          object: user
+          last_error_type: user_creation_error
+        New User:
+          user_id: 1000999843
+          username: shai.hulud
+          email: patreides@google.com
+          date_created: '2023-11-08'
+          first_name: Paul
+          middle_name: string
+          last_name: Atreides
+          gallery_count: 0
+          image_count: 0
+          groups_joined:
+            - string
+          groups_invited:
+            - string
+          privacy_enabled: true
+          subscription: basic
+          object: user
+          last_error_type: string
+      title: User Object
+      x-stoplight:
+        id: k5880agyizf3j
+      properties:
+        user_id:
+          type: integer
+          description: Unique 10-digit id of the user.
+          example: 1000567345
+        username:
+          type: string
+          description: User-created unique identifier.
+          example: maxpower55
+        email:
+          type: string
+          description: Email address of the user. `email_address` is now deprecated.
+          format: email
+          example: max.power@yahoo.com
+        date_created:
+          type: string
+          description: Date the user account was created in ISO 8601 full-date format.
+          format: date
+          example: '2023-11-01'
+        first_name:
+          description: First name of user.
+          type: string
+          example: Max
+        middle_name:
+          description: Middle name of user.
+          type: string
+          deprecated: true
+          x-stoplight:
+            id: vlv5xtvdh3xme
+        last_name:
+          description: Last name of user.
+          type: string
+          example: Power
+        gallery_count:
+          type: integer
+          description: Number of galleries the user has created.
+          example: 3
+        image_count:
+          type: integer
+          description: Number of photos the user has uploaded.
+          example: 20
+        groups_joined:
+          type: array
+          x-stoplight:
+            id: jwd5j4qa9onx0
+          description: Array of groups by `group_id` that the user has joined.
+          items:
+            type: string
+            example: cmnxahsq6btl
+        groups_invited:
+          type: array
+          x-stoplight:
+            id: pmi6mv6palfzx
+          description: Array of groups by `group_id` that the user is invited to but has not joined.
+          items:
+            type: string
+            example: 7204rh9kxhd8
+        privacy_enabled:
+          type: boolean
+          description: 'If `true`, the user''s profile is not searchable by other users.'
+          default: true
+        subscription:
+          description: Subscription level of the user.
+          enum:
+            - basic
+            - starter
+            - premium
+          default: basic
+        object:
+          description: Type of the resource.
+          default: user
+          type: string
+        last_error_type:
+          type: string
+          x-stoplight:
+            id: kka21p2l0qdod
+          description: 'Most recent error associated with this object, if any exists. If the field is empty, no errors have occurred.'
+          example: user_creation_error
+      required:
+        - user_id
+        - username
+        - email
+    Group:
+      type: object
+      x-examples:
+        Example:
+          group_id: 332mnuv46ute
+          group_name: Family
+          admin: 1000475938
+          date_created: '2023-11-06'
+          member_count: 0
+          group_members:
+            - user_id: 1000567345
+              username: maxpower55
+              email: max.power@yahoo.com
+              date_created: '2023-11-01'
+              first_name: Max
+              middle_name: string
+              last_name: Power
+              gallery_count: 3
+              image_count: 20
+              groups_joined:
+                - cmnxahsq6btl
+              groups_invited:
+                - 7204rh9kxhd8
+              privacy_enabled: true
+              subscription: basic
+              object: user
+              last_error_type: user_creation_error
+          group_invites:
+            - user_id: 1000567345
+              username: maxpower55
+              email: max.power@yahoo.com
+              date_created: '2023-11-01'
+              first_name: Max
+              middle_name: string
+              last_name: Power
+              gallery_count: 3
+              image_count: 20
+              groups_joined:
+                - cmnxahsq6btl
+              groups_invited:
+                - 7204rh9kxhd8
+              privacy_enabled: true
+              subscription: basic
+              object: user
+              last_error_type: user_creation_error
+          privacy_enabled: true
+          object: group
+          last_error_type: string
+      title: Group Object
+      x-stoplight:
+        id: yefp64qrun4j4
+      properties:
+        group_id:
+          type: string
+          x-stoplight:
+            id: ncb31e1qhkmym
+          example: 332mnuv46ute
+          description: Unique code to identify the group within the app
+        group_name:
+          type: string
+          x-stoplight:
+            id: b7zvr9xl4q0ie
+          example: Family
+          description: Unique name that users will see in the app.
+        admin:
+          type: integer
+          example: 1000475938
+          description: User who created the group
+        date_created:
+          type: string
+          x-stoplight:
+            id: jf9lsjwc0css0
+          format: date
+          example: '2023-11-06'
+          description: Date the user account was created in ISO 8601 full-date format.
+        member_count:
+          type: integer
+          x-stoplight:
+            id: sn7349hy9uig0
+          description: Number of members in the group
+        group_members:
+          x-stoplight:
+            id: b95vjnuzto7f0
+          type: array
+          description: Array of users who have joined the group.
+          items:
+            $ref: '#/components/schemas/User'
+        group_invites:
+          type: array
+          x-stoplight:
+            id: fptzhr3rl0jqz
+          description: Array of users who are invited to the group but haven't joined yet.
+          items:
+            $ref: '#/components/schemas/User'
+        privacy_enabled:
+          type: boolean
+          default: true
+          description: 'Admin is allowed to set the privacy settings for the group. If `true`, the group is not searchable by other users.'
+        object:
+          x-stoplight:
+            id: yq4o192jlwcaw
+          type: string
+          default: group
+          description: Type of the resource.
+          readOnly: true
+        last_error_type:
+          type: string
+          x-stoplight:
+            id: f3c3tsuwo0oy4
+          description: 'Most recent error associated with this object, if any exists. If the field is empty, no errors have occurred.'
+      required:
+        - group_id
+        - group_name
+        - admin
+    UserEdit:
+      type: object
+      x-examples:
+        Example:
+          username: whitelodge23
+          email: dbcooper@fbi.gov
+          first_name: Dale
+          last_name: Cooper
+          privacy_enabled: true
+      description: Editable attributes of a `user`.
+      title: UserEdit
+      x-stoplight:
+        id: z7sjiznh6qtw3
+      x-internal: false
+      properties:
+        username:
+          type: string
+          description: User-created unique identifier.
+          example: whitelodge23
+        email:
+          type: string
+          description: Email address of the user. `email_address` is now deprecated.
+          format: email
+          example: dbcooper@fbi.gov
+        first_name:
+          type: string
+          description: First name of user.
+          example: Dale
+        last_name:
+          type: string
+          description: Last name of user.
+          example: Cooper
+        privacy_enabled:
+          type: boolean
+          description: 'If `true`, the user''s profile is not searchable by other users.'
+          default: true
+    GalleryEdit:
+      type: object
+      x-examples:
+        Example:
+          gallery_name: TP2023
+          user_id: 1000555234
+          description: Work assignment
+          tags:
+            - work
+            - '2023'
+          gallery_order: 0
+          privacy: private
+      title: GalleryEdit
+      description: Editable attributes of a `gallery`.
+      x-stoplight:
+        id: ec8ui2tepz8f9
+      x-internal: false
+      properties:
+        gallery_name:
+          type: string
+          description: Display name of the gallery. Alphanumeric characters only.
+          example: TP2023
+        user_id:
+          type: integer
+          description: Unique 10-digit id of the user who owns the gallery.
+          example: 1000555234
+        description:
+          type: string
+          description: Text description created by the user.
+          maxLength: 250
+          example: Work assignment
+        tags:
+          type: array
+          description: List of tags attached to the gallery. Tags are defined by the user.
+          items:
+            type: string
+            example: work
+        gallery_order:
+          type: integer
+          description: The display order of the gallery in the user's set of galleries. Display order is a 0-based index.
+        privacy:
+          description: Indicates whether a gallery is shareable.
+          enum:
+            - private
+            - shareable
+            - public
+    GroupEdit:
+      type: object
+      x-examples:
+        Example 2:
+          group_name: School Group
+          admin: 1000364998
+          group_invites:
+            - 1000496752
+            - 1000222632
+          privacy_enabled: true
+      x-internal: false
+      description: Editable attributes of a `group`.
+      title: GroupEdit
+      x-stoplight:
+        id: ha35zrddbnr11
+      properties:
+        group_name:
+          type: string
+          description: Unique name that users will see in the app.
+        admin:
+          type: integer
+          description: User id of the group admin.
+          example: 1000364998
+        group_invites:
+          type: array
+          x-stoplight:
+            id: lrxpi53ghyel9
+          description: Array of user ids. Users included here will be sent an invite to join the group.
+          items:
+            x-stoplight:
+              id: 6ws0k2pumg88d
+            type: integer
+            example: 1000496752
+        privacy_enabled:
+          type: boolean
+          description: 'If `true`, the group is not searchable by other users outside the group.'
+      required:
+        - group_name
+        - admin
+    Error:
+      type: object
+      x-examples:
+        Unauthorized:
+          status: 401
+          error_type: api_key_invalid
+          error_message: string
+        Example 2:
+          status: 400
+          error_type: user_creation_error
+          error_message: string
+      title: Error
+      x-internal: false
+      x-stoplight:
+        id: yh7krawh1kgu9
+      properties:
+        status:
+          type: integer
+          description: HTTP status code for the error. 400-599 range.
+        error_type:
+          type: string
+          description: 'Type of [error](docs/Errors.md) that occurred.'
+        error_message:
+          type: string
+          description: Description providing more information on the cause of the error.
+      required:
+        - status
+        - error_type
+        - error_message
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+      description: ''
+  responses:
+    error_unauthorized:
+      description: 'Unauthorized. API key is missing or invalid. If your key appears valid in the request, it may not be active in your account. You can view and manage your API keys from the developer dashboard.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Example 1:
+              value:
+                status: 401
+                error_type: api_key_invalid
+                error_message: 'API key is invalid, missing, or inactive.'
+      headers: {}
+    error_bad_request:
+      description: 'Bad request, likely due to an invalid parameter. See [Errors & Troubleshooting](docs/Errors.md) to view a list of all possible errors.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Example 1:
+              value:
+                status: 400
+                error_type: user_creation_error
+                error_message: 'New user cannot be created due to one of the following conditions: username already in use, email missing, email already in use, or username does not meet criteria.'
+  requestBodies: {}
+  parameters:
+    user_id:
+      name: user_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        example: 1000567348
+      description: Unique 10-digit id of the user
+    gallery_id:
+      name: gallery_id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Unique ID of the gallery
+servers:
+  - url: 'https://api.starwipe.com/v2'
+x-internal: false
+tags:
+  - name: Galleries
+    description: Work with galleries
+  - name: Groups
+    description: Create groups
+  - name: Users
+    description: Work with users
+security:
+  - ApiKeyAuth: []

@@ -1,0 +1,48 @@
+{
+  "collapseTableOfContents": false,
+  "items": [
+    {
+      "type": "item",
+      "title": "About Starwipe",
+      "uri": "/docs/About-Starwipe.md"
+    },
+    {
+      "type": "divider",
+      "title": "Overview"
+    },
+    {
+      "type": "item",
+      "title": "Getting Started",
+      "uri": "/docs/Getting-Started.md"
+    },
+    {
+      "type": "item",
+      "title": "Authentication",
+      "uri": "/docs/Authentication.md"
+    },
+    {
+      "type": "item",
+      "title": "Errors & Troubleshooting",
+      "uri": "/docs/Errors.md"
+    },
+    {
+      "type": "item",
+      "title": "Tutorials",
+      "uri": "/docs/Tutorials.md"
+    },
+    {
+      "type": "item",
+      "title": "What's New",
+      "uri": "/docs/Whats-New.md"
+    },
+    {
+      "type": "divider",
+      "title": "API Reference"
+    },
+    {
+      "type": "item",
+      "title": "API Overview",
+      "uri": "/reference/photohostingAPI.yaml"
+    }
+  ]
+}
